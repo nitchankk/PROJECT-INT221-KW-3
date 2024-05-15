@@ -1,0 +1,58 @@
+services:
+  database:
+    image: 'mysql:latest'
+    container_name: database
+    restart: always
+    ports:
+      - '3306:3306'
+    networks:
+      - backend_net
+    environment:
+      MYSQL_DATABASE: kanban_DB
+      MYSQL_USER: kw3
+      MYSQL_PASSWORD: kw3@1234
+      MYSQL_ROOT_PASSWORD: root@1234
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/kanbanV2.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/my.cnf:/etc/my.cnf
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    networks:
+      - backend_net
+      - frontend_net
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=kanban_DB
+      - DB_USER=kw3
+      - DB_PASS=kw3@1234
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    networks:
+      - frontend_net
+
+  proxy:
+    image: 'nginx:alpine'
+    container_name: proxy
+    ports:
+      - '80:80'
+    volumes:
+      - ./proxy/proxy.conf:/etc/nginx/conf.d/proxy.conf
+    depends_on:
+      - frontend
+    networks:
+      - frontend_net
+
+networks:
+  backend_net:
+  frontend_net:
