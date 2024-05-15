@@ -6,18 +6,22 @@ import StatusList from './v2/StatusList.vue';
 const routes = [
   {
     path: '/task',
+    name: "taskView",
     component: TaskList,
   },
   {
     path: '/task/:taskId',
+    name: "taskDetail",
     component: TaskList,
   },
   {
     path: '/status',
+    name: "statusView",
     component: StatusList,
   },
   {
     path: '/status/:statusId',
+    name: "statusDetail",
     component: StatusList,
   },
   {
