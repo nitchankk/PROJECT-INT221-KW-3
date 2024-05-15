@@ -154,7 +154,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute , useRouter  } from 'vue-router'
 import TaskModal from './TaskModal.vue'
 import AddModal from './AddModal.vue'
 import DeleteModal from './DeleteModal.vue'
@@ -175,6 +175,7 @@ const taskToEdit = ref(null)
 const operationType = ref('')
 const taskTitleToDelete = ref(null)
 const taskIndexToDelete = ref(null)
+const router = useRouter()
 
 const route = useRoute()
 
@@ -311,7 +312,7 @@ const handleEditSuccess = (status) => {
   showSuccessModal.value = true
 }
 const goToStatusManagement = () => {
-  window.location.href = '/status'
+  router.push({name: "statusView"})
 }
 onMounted(() => {
   fetchTasks()
