@@ -146,7 +146,7 @@ async function fetchData() {
 }
 
 const backToHomePage = () => {
-  window.location.href = '/task'
+  router.push({name: "taskView"})
 }
 
 // Add ----------------------------------------------------------
