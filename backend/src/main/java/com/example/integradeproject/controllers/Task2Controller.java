@@ -58,8 +58,8 @@ public class Task2Controller {
 //
 //        return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
 //    }
-@PostMapping("")
-public ResponseEntity<NewTask2DTO> createTask(@RequestBody NewTask2DTO newTask2DTO) {
+    @PostMapping("")
+    public ResponseEntity<NewTask2DTO> createTask(@RequestBody NewTask2DTO newTask2DTO) {
     NewTask2DTO createdTaskDTO = service.createTask(newTask2DTO);
     return new ResponseEntity<>(createdTaskDTO, HttpStatus.OK);
 }

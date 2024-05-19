@@ -25,6 +25,7 @@ import lombok.Setter;
 public class Task2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer taskId;
     private String title ;
     private String description ;

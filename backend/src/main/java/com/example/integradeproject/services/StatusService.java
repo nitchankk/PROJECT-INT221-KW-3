@@ -19,6 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 @Service
 public class StatusService {
+    private static final String NO_STATUS = "No Status";
+    private static final String DONE_STATUS = "Done";
+
     @Autowired
     private StatusRepository statusRepository;
     @Autowired
@@ -28,6 +31,7 @@ public class StatusService {
     @Autowired
     ListMapper listMapper;
     @PersistenceContext
+
     private EntityManager entityManager;
 
     public List<Status> findAllStatus() {
@@ -75,4 +79,11 @@ public class StatusService {
 
         statusRepository.delete(currentStatus);
     }
+
+
+
+
+
+
+
 }

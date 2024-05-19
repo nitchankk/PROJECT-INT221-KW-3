@@ -64,9 +64,8 @@ public class StatusController {
         service.deleteStatusAndTransferTasks(id, newId);
         return ResponseEntity.ok("{}");
     }
-
-
 }
+
 
 
 
