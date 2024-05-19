@@ -24,7 +24,7 @@ import com.example.integradeproject.services.ListMapper;
 import com.example.integradeproject.services.Task2Service;
 
 @RestController
-@CrossOrigin(origins = {"http://ip23kw3.sit.kmutt.ac.th", "http://intproj23.sit.kmutt.ac.th"})
+@CrossOrigin(origins = {"http://ip23kw3.sit.kmutt.ac.th", "http://intproj23.sit.kmutt.ac.th" ,"http://localhost:5173"})
 @RequestMapping("/v2/tasks")
 
 
