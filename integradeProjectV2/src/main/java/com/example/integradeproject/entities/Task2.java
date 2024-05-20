@@ -25,6 +25,7 @@ import java.util.Date;
 public class Task2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "taskId")
     private Integer taskId;
     private String title ;
     private String description ;
