@@ -1,25 +1,16 @@
 package com.example.integradeproject.controllers;
 
-import java.util.List;
-
+import com.example.integradeproject.entities.Status;
+import com.example.integradeproject.services.ListMapper;
+import com.example.integradeproject.services.StatusService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.example.integradeproject.entities.Status;
-import com.example.integradeproject.services.ListMapper;
-import com.example.integradeproject.services.StatusService;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://ip23kw3.sit.kmutt.ac.th", "http://intproj23.sit.kmutt.ac.th" ,"http://localhost:5173"})
@@ -40,16 +31,15 @@ public class StatusController {
     @PostMapping("")
     public ResponseEntity<Status> createStatus(@RequestBody Status status) {
         Status newStatus = service.createNewStatus(status);
-        return new ResponseEntity<>(newStatus, HttpStatus.OK);
+        return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public  ResponseEntity<Status> UpdateStatus (@RequestBody Status status , @PathVariable Integer id ){
-        try{
-            Status updateStatus  =service.updateByStatusId(status , id);
-            return  ResponseEntity.ok(updateStatus);
-
-        }catch (HttpClientErrorException e) {
+    public ResponseEntity<Status> UpdateStatus(@RequestBody Status status, @PathVariable Integer id) {
+        try {
+            Status updatedStatus = service.updateByStatusId(status, id);
+            return ResponseEntity.ok(updatedStatus);
+        } catch (HttpClientErrorException e) {
             return ResponseEntity.status(e.getStatusCode()).body(null);
         }
     }
@@ -64,8 +54,9 @@ public class StatusController {
         service.deleteStatusAndTransferTasks(id, newId);
         return ResponseEntity.ok("{}");
     }
-}
 
+
+}
 
 
 

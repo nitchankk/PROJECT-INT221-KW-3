@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,8 +32,26 @@ public class Task2Service {
     @Autowired
     private StatusRepository statusRepository;
 
-    public List<Task2DTO> getTask() {
-        List<Task2> tasks = repository.findAll();
+    public List<Task2DTO> getTask(String filterStatus, String statusName) {
+        List<Task2> tasks;
+        if (filterStatus == null) {
+            if (statusName == null || statusName.equalsIgnoreCase("asc")) {
+                tasks = repository.findAllByOrderByStatusId_StatusNameAsc();
+            } else if (statusName.equalsIgnoreCase("desc")) {
+                tasks = repository.findAllByOrderByStatusId_StatusNameDesc();
+            } else {
+                throw new IllegalArgumentException("Invalid sort order: " + statusName);
+            }
+        } else {
+            List<String> statusNames = Arrays.asList(filterStatus.split(","));
+            if (statusName == null || statusName.equalsIgnoreCase("asc")) {
+                tasks = repository.findByStatusId_StatusNameInOrderByStatusId_StatusNameAsc(statusNames);
+            } else if (statusName.equalsIgnoreCase("desc")) {
+                tasks = repository.findByStatusId_StatusNameInOrderByStatusId_StatusNameDesc(statusNames);
+            } else {
+                throw new IllegalArgumentException("Invalid sort order: " + statusName);
+            }
+        }
 
         return tasks.stream()
                 .map(task -> {
@@ -77,9 +96,9 @@ public class Task2Service {
         Task2 existingTask = repository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
-        existingTask.setTitle(newTask2DTO.getTitle());
-        existingTask.setDescription(newTask2DTO.getDescription());
-        existingTask.setAssignees(newTask2DTO.getAssignees());
+        existingTask.setTitle(newTask2DTO.getTitle().trim());
+        existingTask.setDescription(newTask2DTO.getDescription().trim());
+        existingTask.setAssignees(newTask2DTO.getAssignees().trim());
 
         // Find the Status entity by name
         Optional<Status> status = statusRepository.findByStatusName(newTask2DTO.getStatusName());

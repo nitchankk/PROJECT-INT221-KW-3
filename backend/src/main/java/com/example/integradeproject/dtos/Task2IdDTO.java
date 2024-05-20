@@ -1,9 +1,9 @@
 package com.example.integradeproject.dtos;
 
-import java.sql.Timestamp;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.sql.Timestamp;
 @Getter
 @Setter
 public class Task2IdDTO {

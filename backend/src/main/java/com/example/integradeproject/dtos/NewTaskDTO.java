@@ -1,8 +1,12 @@
 package com.example.integradeproject.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -13,8 +17,6 @@ public class NewTaskDTO {
     private String description ;
     private String assignees ;
     private String  status ;
-
-
 
 
 

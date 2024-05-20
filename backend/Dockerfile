@@ -7,4 +7,4 @@ RUN mvn -f /app/pom.xml clean package -DskipTests
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/target/kw3.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/*.jar"]
