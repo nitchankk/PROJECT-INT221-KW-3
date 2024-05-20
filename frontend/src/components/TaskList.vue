@@ -274,7 +274,7 @@ const openModal = async (taskId) => {
   console.error('Error fetching task details:', error)
   if (error.status === 404) {
   } else {
-    alert('Failed to fetch task details. Please try again.', error)
+    alert('The Request Task does not exist')
   }
 }
 
