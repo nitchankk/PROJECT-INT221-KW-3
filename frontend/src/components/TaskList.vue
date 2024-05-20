@@ -223,12 +223,12 @@ const fetchTasks = async () => {
   try {
     const data = await FetchUtils.fetchData('tasks')
     tasks.value = data
-
+    
     const taskId = route.params.taskId
     if (taskId && !tasks.value.some((task) => task.taskId === taskId)) {
-      alert('404 Not Found: Status ID does not exist')
       router.push('/task')
     }
+
   } catch (error) {
     console.error('Error fetching tasks:', error)
   }
@@ -267,10 +267,18 @@ const openModal = async (taskId) => {
   }
   try {
     const data = await FetchUtils.fetchData(`tasks/${taskId}`)
-    selectedTask.value = data
+    if (data) {
+      selectedTask.value = data
+    } 
   } catch (error) {
-    console.error('Error fetching task details:', error)
+  console.error('Error fetching task details:', error)
+  if (error.status === 404) {
+  } else {
+    alert('Failed to fetch task details. Please try again.', error)
   }
+}
+
+
 }
 const handleTaskClick = (taskId) => {
   if (taskId) {
@@ -290,6 +298,7 @@ const handleTaskSaved = (savedTask) => {
 }
 const cancelAdd = () => {
   showAddModal.value = false
+  
 }
 const closeModal = () => {
   selectedTask.value = null
@@ -370,6 +379,7 @@ onMounted(() => {
     openModal(taskId)
   }
 })
+
 </script>
 <style scoped>
 #app {

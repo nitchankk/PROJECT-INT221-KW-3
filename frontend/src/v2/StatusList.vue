@@ -131,7 +131,6 @@ async function fetchData() {
     const taskData = await fetchUtils.fetchData('tasks')
     tasks.value = taskData
 
-    // Check if route has a status ID and validate it
     const statusId = route.params.statusId
     if (
       statusId &&
