@@ -27,7 +27,16 @@
                   />
                 </button>
               </th>
-              <th style="width: 600px">Title</th>
+              <th style="width: 600px">
+                Title
+                <button @click="openFilterModal" class="itbkk-filter-status">
+                  <img
+                    src="../assets/filter.png"
+                    alt="filter Icon"
+                    style="width: 25px; height: 25px"
+                  />
+                </button>
+              </th>
               <th style="width: 200px">Assignees</th>
               <th style="width: 120px; position: relative">
                 Status
@@ -178,6 +187,13 @@
       :onTaskUpdated="onTaskUpdated"
       @editSuccess="handleEditSuccess"
     />
+    <filter-modal
+      v-if="showFilterModal"
+      :statuses="statuses"
+      :selectedStatuses="selectedStatuses"
+      @applyFilter="applyFilter"
+      @close="closeFilterModal"
+    ></filter-modal>
   </div>
 </template>
 
@@ -189,6 +205,7 @@ import AddModal from './AddModal.vue'
 import DeleteModal from './DeleteModal.vue'
 import StatusModal from './StatusModal.vue'
 import EditModal from './EditModal.vue'
+import FilterModal from './FilterModal.vue'
 import FetchUtils from '../lib/fetchUtils'
 
 const tasks = ref([])
@@ -204,6 +221,7 @@ const taskToEdit = ref(null)
 const operationType = ref('')
 const taskTitleToDelete = ref(null)
 const taskIndexToDelete = ref(null)
+const selectedStatuses = ref([])
 
 const sortOrder = ref(0)
 
@@ -223,12 +241,11 @@ const fetchTasks = async () => {
   try {
     const data = await FetchUtils.fetchData('tasks')
     tasks.value = data
-    
+
     const taskId = route.params.taskId
     if (taskId && !tasks.value.some((task) => task.taskId === taskId)) {
       router.push('/task')
     }
-
   } catch (error) {
     console.error('Error fetching tasks:', error)
   }
@@ -252,7 +269,11 @@ const sortedTasks = computed(() => {
   } else {
     sorted.sort((a, b) => new Date(a.createdOn) - new Date(b.createdOn))
   }
-  return sorted
+  return sorted.filter(
+    (task) =>
+      selectedStatuses.value.length === 0 ||
+      selectedStatuses.value.includes(task.statusName)
+  )
 })
 
 const getStatusLabel = (statusName, statuses) => {
@@ -269,16 +290,14 @@ const openModal = async (taskId) => {
     const data = await FetchUtils.fetchData(`tasks/${taskId}`)
     if (data) {
       selectedTask.value = data
-    } 
+    }
   } catch (error) {
-  console.error('Error fetching task details:', error)
-  if (error.status === 404) {
-  } else {
-    alert('The Request Task does not exist')
+    console.error('Error fetching task details:', error)
+    if (error.status === 404) {
+    } else {
+      alert('The Request Task does not exist')
+    }
   }
-}
-
-
 }
 const handleTaskClick = (taskId) => {
   if (taskId) {
@@ -298,7 +317,6 @@ const handleTaskSaved = (savedTask) => {
 }
 const cancelAdd = () => {
   showAddModal.value = false
-  
 }
 const closeModal = () => {
   selectedTask.value = null
@@ -369,6 +387,21 @@ const sortTasksByStatus = () => {
   sortOrder.value = (sortOrder.value + 1) % 3
 }
 
+const showFilterModal = ref(false)
+
+const openFilterModal = () => {
+  showFilterModal.value = true
+}
+
+const closeFilterModal = () => {
+  showFilterModal.value = false
+}
+
+const applyFilter = (selectedStatusesValue) => {
+  selectedStatuses.value = selectedStatusesValue
+  closeFilterModal()
+}
+
 onMounted(() => {
   fetchTasks()
   fetchStatuses()
@@ -379,7 +412,6 @@ onMounted(() => {
     openModal(taskId)
   }
 })
-
 </script>
 <style scoped>
 #app {
@@ -518,11 +550,6 @@ tbody tr:hover {
   height: 35px;
 }
 
-.itbkk-button-sort button:hover {
-  width: 35px;
-  height: 35px;
-}
-
 .itbkk-button-sort button:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -538,6 +565,25 @@ tbody tr:hover {
 }
 
 .itbkk-button-sort img:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.itbkk-filter-status button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.itbkk-filter-status img {
+  width: 100%;
+  height: 100%;
+}
+
+.itbkk-filter-status img:hover {
+  transform: translateY(1px);
+}
+
+.itbkk-filter-status img:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
