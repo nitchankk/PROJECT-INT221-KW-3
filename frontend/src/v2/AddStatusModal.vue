@@ -12,8 +12,12 @@
             type="text"
             id="statusName"
             v-model.trim="statusName"
+            maxlength="50"
             class="w-full border rounded-md p-2 font-medium"
           />
+          <small v-if="statusName.length > 50" class="text-red-500"
+            >Name must be at most 50 characters long.</small
+          >
         </div>
         <div class="mb-4">
           <label
@@ -24,9 +28,13 @@
           <textarea
             id="statusDescription"
             v-model.trim="statusDescription"
+            maxlength="200"
             class="w-full border rounded-md p-2 font-medium"
             rows="4"
           ></textarea>
+          <small v-if="statusDescription.length > 200" class="text-red-500"
+            >Description must be at most 200 characters long.</small
+          >
         </div>
         <div class="flex justify-end">
           <button
@@ -40,11 +48,11 @@
             type="submit"
             :class="[
               'px-4 py-2 rounded-md itbkk-button-confirm',
-              !statusName.trim()
+              isSaveDisabled
                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                 : 'bg-blue-500 text-white hover:bg-blue-600'
             ]"
-            :disabled="!statusName.trim()"
+            :disabled="isSaveDisabled"
           >
             Add Status
           </button>
@@ -61,7 +69,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 import fetchUtils from '../lib/fetchUtils'
 import Toast from './Toast.vue'
 
@@ -83,21 +91,38 @@ const closeModal = () => {
   emit('closeModal')
 }
 
+const isSaveDisabled = computed(() => {
+  return (
+    !statusName.value.trim() ||
+    statusName.value.length > 50 ||
+    statusDescription.value.length > 200
+  )
+})
+
 const addStatus = async () => {
   operationType.value = 'add'
-  console.log('OpeartionType', operationType.value)
   try {
+    const existingStatuses = await fetchUtils.fetchData('statuses')
+    const existingStatusNames = existingStatuses.map(
+      (status) => status.statusName
+    )
+
+    if (existingStatusNames.includes(statusName.value)) {
+      alert('Status name must be unique. Please enter a different name.')
+      return
+    }
+
     const newStatus = {
       statusName: statusName.value,
       statusDescription: statusDescription.value
     }
     const response = await fetchUtils.postData('statuses', newStatus)
     statusCode.value = response.statusCode
-    console.log('Response status code:', statusCode.value)
     if (response.success) {
       closeModal()
       emit('statusAdded')
       showToast.value = true
+      console.log(statusCode.value)
     }
   } catch (error) {
     console.error('Error adding status:', error)

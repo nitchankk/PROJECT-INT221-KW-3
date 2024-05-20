@@ -10,7 +10,7 @@
         <table>
           <thead>
             <tr>
-              <th style="width: 30px; text-align: center" class="add-icon">
+              <th style="width: 40px; text-align: center" class="add-icon">
                 <button
                   @click="openAddModal"
                   style="border: none; background: none; padding: 0"
@@ -238,15 +238,17 @@ onMounted(fetchData)
 
 <style scoped>
 #app {
-  width: 1200px;
+  width: 1500px;
   margin: 0 auto;
 }
 
 .table-container {
   margin: 0 auto;
   width: 80%;
-  max-width: 1200px;
-  overflow-x: auto;
+  max-width: 1500px;
+  border-radius: 8px;
+  overflow-x: hidden;
+  font-size: 19px;
 }
 
 h2 {
@@ -259,7 +261,6 @@ table {
   width: 100%;
   border-collapse: collapse;
   border-radius: 8px;
-  overflow: hidden;
 }
 
 thead {

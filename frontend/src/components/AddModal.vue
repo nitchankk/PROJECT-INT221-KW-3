@@ -13,7 +13,11 @@
               v-model="taskDetails.title"
               class="itbkk-title"
               required
+              maxlength="100"
             />
+            <small v-if="taskDetails.title.length > 100" class="error">
+              Title must be at most 100 characters long.
+            </small>
           </div>
           <div class="form-group">
             <label for="description">Description:</label>
@@ -21,7 +25,11 @@
               id="description"
               v-model="taskDetails.description"
               class="itbkk-description"
+              maxlength="500"
             ></textarea>
+            <small v-if="taskDetails.description.length > 500" class="error">
+              Description must be at most 500 characters long.
+            </small>
           </div>
           <div class="form-group">
             <label for="assignees">Assignees:</label>
@@ -30,7 +38,11 @@
               id="assignees"
               v-model="taskDetails.assignees"
               class="itbkk-assignees"
+              maxlength="30"
             />
+            <small v-if="taskDetails.assignees.length > 30" class="error">
+              Assignees must be at most 30 characters long.
+            </small>
           </div>
           <div class="form-group">
             <label for="status">Status:</label>
@@ -99,7 +111,12 @@ export default {
   },
   computed: {
     isSaveDisabled() {
-      return !this.taskDetails.title.trim()
+      return (
+        !this.taskDetails.title.trim() ||
+        this.taskDetails.title.length > 100 ||
+        this.taskDetails.description.length > 500 ||
+        this.taskDetails.assignees.length > 30
+      )
     }
   },
   methods: {
@@ -228,8 +245,14 @@ textarea {
 .itbkk-button-cancel:hover {
   opacity: 0.8;
 }
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
 .disabled {
-  background-color: gray; /* เปลี่ยนสีตามความเหมาะสม */
+  background-color: gray;
   cursor: not-allowed;
 }
 </style>

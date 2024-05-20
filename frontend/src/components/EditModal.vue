@@ -14,7 +14,11 @@
               v-model="editedTask.title"
               class="itbkk-title"
               required
+              maxlength="100"
             />
+            <small v-if="editedTask.title.length > 100" class="error">
+              Title must be at most 100 characters long.
+            </small>
           </div>
 
           <!-- Description Input -->
@@ -27,7 +31,11 @@
               :placeholder="
                 editedTask.description ? '' : 'No Description Provided'
               "
+              maxlength="500"
             ></textarea>
+            <small v-if="editedTask.description.length > 500" class="error">
+              Description must be at most 500 characters long.
+            </small>
           </div>
 
           <!-- Assignees Input -->
@@ -39,7 +47,11 @@
               v-model="editedTask.assignees"
               class="itbkk-assignees"
               :placeholder="editedTask.assignees ? '' : 'Unassigned'"
+              maxlength="30"
             />
+            <small v-if="editedTask.assignees.length > 30" class="error">
+              Assignees must be at most 30 characters long.
+            </small>
           </div>
 
           <!-- Status Select -->
@@ -126,7 +138,7 @@ const editedTask = ref({
   title: '',
   description: '',
   assignees: '',
-  statusName: '' // Add status property
+  statusName: '' 
 })
 const statuses = ref([])
 
@@ -134,12 +146,15 @@ if (props.task) {
   editedTask.value = { ...props.task }
 }
 
-// Compute the initial state of the task to compare later
 const initialTask = JSON.parse(JSON.stringify(props.task))
 
 const isSaveDisabled = computed(() => {
-  // Check if the editedTask is different from the initialTask
-  return JSON.stringify(editedTask.value) === JSON.stringify(initialTask)
+  return (
+    JSON.stringify(editedTask.value) === JSON.stringify(initialTask) ||
+    editedTask.value.title.length > 100 ||
+    editedTask.value.description.length > 500 ||
+    editedTask.value.assignees.length > 30
+  )
 })
 
 const handleEditTask = async () => {
@@ -148,18 +163,16 @@ const handleEditTask = async () => {
       title: editedTask.value.title,
       description: editedTask.value.description,
       assignees: editedTask.value.assignees,
-      statusName: editedTask.value.statusName, // Include statusName
+      statusName: editedTask.value.statusName, 
       updatedOn: new Date().toISOString()
     }
 
-    // Make API request to update the task
     const response = await FetchUtils.putData(
       `tasks/${props.task.taskId}`,
       updatedTask
     )
 
     if (response && response.success) {
-      // If update is successful, refresh the task data and close the modal
       props.onTaskUpdated(response.data)
       props.closeModal()
       if (response.statusCode === 200) {
@@ -177,13 +190,11 @@ const handleEditTask = async () => {
     alert('Error to updating task. Please try again.')
   }
 }
-// Function to format local date
 const formatLocalDate = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleString('en-GB')
 }
 
-// Compute timezone
 const timezone = computed(
   () => Intl.DateTimeFormat().resolvedOptions().timeZone
 )
@@ -197,14 +208,12 @@ const fetchStatuses = async () => {
   }
 }
 
-// Fetch statuses when the component is mounted
 onMounted(() => {
   fetchStatuses()
 })
 </script>
 
 <style scoped>
-/* Styles for EditModal */
 .modal-wrapper {
   position: fixed;
   top: 0;
@@ -311,6 +320,11 @@ textarea {
 .disabled {
   background-color: gray;
   cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
 }
 
 .itbkk-description::placeholder,

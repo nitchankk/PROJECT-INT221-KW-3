@@ -89,14 +89,6 @@ const fetchExistingStatuses = async () => {
     )
 
     selectedStatusId.value = defaultStatus ? defaultStatus.statusId : null
-
-    console.log('Existing statuses:', existingStatuses.value)
-
-    existingStatuses.value.forEach((status) => {
-      console.log('Status:', status)
-      console.log('Status ID:', status.statusId)
-      console.log('Status Name:', status.statusName)
-    })
   } catch (error) {
     console.error('Error fetching existing statuses:', error)
   }
