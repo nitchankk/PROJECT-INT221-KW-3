@@ -91,13 +91,13 @@
           <tbody>
             <tr
               v-for="(task, index) in sortedTasks"
-              :key="task.taskId"
+              :key="task.id"
               class="itbkk-item"
             >
               <td class="border px-4 py-2" style="text-align: center">
                 {{ index + 1 }}
               </td>
-              <td class="itbkk-title" @click="handleTaskClick(task.taskId)">
+              <td class="itbkk-title" @click="handleTaskClick(task.id)">
                 {{ task.title }}
               </td>
               <td
@@ -108,15 +108,15 @@
               </td>
               <td
                 class="border px-4 py-2 itbkk-status"
-                :data-status="task.statusName"
+                :data-status="task.status.name"
               >
-                {{ getStatusLabel(task.statusName, statuses) }}
+                {{ getStatusLabel(task.status.name, statuses) }}
               </td>
               <td class="border px-4 py-2" style="width: 100px">
                 <div class="action-buttons">
                   <button class="itbkk-button-action">
                     <button
-                      @click="openEditModal(task.taskId)"
+                      @click="openEditModal(task.id)"
                       style="
                         border: none;
                         background: none;
@@ -133,7 +133,7 @@
                     </button>
 
                     <button
-                      @click="openDeleteModal(task.taskId)"
+                      @click="openDeleteModal(task.id)"
                       style="border: none; background: none; padding: 0"
                       class="itbkk-button-delete"
                     >
@@ -178,8 +178,8 @@
     <delete-modal
       v-if="showDeleteModal"
       :closeModal="closeDeleteModal"
-      :taskId="taskIdToDelete"
-      :taskTitle="taskTitleToDelete"
+      :id="taskIdToDelete"
+      :title="taskTitleToDelete"
       :taskIndex="taskIndexToDelete"
       @deleted="handleTaskDeleted"
     />
@@ -239,7 +239,7 @@ const taskToEdit = ref(null)
 const operationType = ref('')
 const taskTitleToDelete = ref(null)
 const taskIndexToDelete = ref(null)
-const selectedStatuses = ref(statuses.value.map((status) => status.statusName))
+const selectedStatuses = ref(statuses.value.map((status) => status.name))
 
 const sortOrder = ref(0)
 
@@ -259,9 +259,9 @@ const fetchTasks = async () => {
   try {
     const data = await FetchUtils.fetchData('tasks')
     tasks.value = data
-
-    const taskId = route.params.taskId
-    if (taskId && !tasks.value.some((task) => task.taskId === taskId)) {
+      console.log(tasks.value)
+    const taskId = route.params.id
+    if (taskId && !tasks.value.some((task) => task.id === taskId)) {
       router.push('/task')
     }
   } catch (error) {
@@ -292,7 +292,7 @@ const sortedTasks = computed(() => {
 
   if (selectedStatuses.value.length > 0) {
     filteredTasks = sorted.filter((task) =>
-      selectedStatuses.value.includes(task.statusName)
+      selectedStatuses.value.includes(task.status.name)
     )
   } else {
     // Show all tasks by default
@@ -302,20 +302,21 @@ const sortedTasks = computed(() => {
   return filteredTasks
 })
 
-const getStatusLabel = (statusName, statuses) => {
-  const status = statuses.find((s) => s.statusName === statusName)
-  return status ? status.statusName : 'No Status'
+const getStatusLabel = (name, statuses) => {
+  const status = statuses.find((s) => s.name === name)
+  return status ? status.name : 'No Status'
 }
 
-const openModal = async (taskId) => {
-  if (!taskId) {
+const openModal = async (id) => {
+  if (!id) {
     console.error('Task ID is invalid or missing.')
     return
   }
   try {
-    const data = await FetchUtils.fetchData(`tasks/${taskId}`)
+    const data = await FetchUtils.fetchData(`tasks/${id}`)
     if (data) {
       selectedTask.value = data
+      
     }
   } catch (error) {
     console.error('Error fetching task details:', error)
@@ -325,11 +326,11 @@ const openModal = async (taskId) => {
     }
   }
 }
-const handleTaskClick = (taskId) => {
-  if (taskId) {
-    openModal(taskId)
+const handleTaskClick = (id) => {
+  if (id) {
+    openModal(id)
   } else {
-    console.error('Invalid taskId:', taskId)
+    console.error('Invalid taskId:', id)
   }
 }
 const handleAddTask = () => {
@@ -347,10 +348,10 @@ const cancelAdd = () => {
 const closeModal = () => {
   selectedTask.value = null
 }
-const openDeleteModal = (taskId) => {
-  const task = tasks.value.find((task) => task.taskId === taskId)
+const openDeleteModal = (id) => {
+  const task = tasks.value.find((task) => task.id === id)
   if (task) {
-    taskIdToDelete.value = taskId
+    taskIdToDelete.value = id
     taskTitleToDelete.value = task.title
     taskIndexToDelete.value = tasks.value.indexOf(task) + 1
     operationType.value = 'delete'
@@ -360,7 +361,7 @@ const openDeleteModal = (taskId) => {
 const handleTaskDeleted = (deletedTaskId, receivedStatusCode) => {
   console.log('Received deletion status code:', receivedStatusCode)
   statusCode.value = receivedStatusCode
-  tasks.value = tasks.value.filter((task) => task.taskId !== deletedTaskId)
+  tasks.value = tasks.value.filter((task) => task.id !== deletedTaskId)
   closeDeleteModal()
   showSuccessModal.value = true
 }
@@ -376,9 +377,9 @@ const handleShowStatusModal = (status) => {
     statusCode.value = status
   }
 }
-const openEditModal = async (taskId) => {
+const openEditModal = async (id) => {
   try {
-    const data = await FetchUtils.fetchData('tasks', taskId)
+    const data = await FetchUtils.fetchData('tasks', id)
     taskToEdit.value = data
     if (taskToEdit.value) {
       operationType.value = 'edit'
@@ -394,7 +395,7 @@ const closeEditModal = () => {
 }
 const onTaskUpdated = (updatedTask) => {
   const taskIndex = tasks.value.findIndex(
-    (task) => task.taskId === updatedTask.taskId
+    (task) => task.id === updatedTask.id
   )
   if (taskIndex !== -1) {
     tasks.value[taskIndex] = updatedTask
@@ -434,7 +435,7 @@ onMounted(() => {
   fetchStatuses()
 })
 onMounted(() => {
-  const taskId = route.params.taskId
+  const taskId = route.params.id
   if (taskId) {
     openModal(taskId)
   }

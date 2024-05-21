@@ -57,10 +57,10 @@
               <option
                 v-else
                 v-for="status in statuses"
-                :key="status.statusId"
-                :value="status.statusName"
+                :key="status.id"
+                :value="status.name"
               >
-                {{ status.statusName }}
+                {{ status.name }}
               </option>
             </select>
           </div>
@@ -122,6 +122,8 @@ export default {
   methods: {
     async handleSaveTask() {
       try {
+   
+
         const { success, data, statusCode } = await FetchUtils.postData(
           'tasks',
           this.taskDetails
@@ -134,7 +136,7 @@ export default {
             title: '',
             description: '',
             assignees: '',
-            status: 'No Status'
+            statusName: 'No Status'
           }
           this.closeModal()
         } else {

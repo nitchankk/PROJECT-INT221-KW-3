@@ -5,34 +5,34 @@
       <h2 class="text-lg font-semibold mb-4">Add Status</h2>
       <form @submit.prevent="addStatus" class="itbkk-modal-status">
         <div class="mb-4">
-          <label for="statusName" class="block font-semibold mb-1 text-left"
+          <label for="name" class="block font-semibold mb-1 text-left"
             >Name</label
           >
           <input
             type="text"
-            id="statusName"
-            v-model.trim="statusName"
+            id="name"
+            v-model.trim="name"
             maxlength="50"
             class="w-full border rounded-md p-2 font-medium"
           />
-          <small v-if="statusName.length > 50" class="text-red-500"
+          <small v-if="name.length > 50" class="text-red-500"
             >Name must be at most 50 characters long.</small
           >
         </div>
         <div class="mb-4">
           <label
-            for="statusDescription"
+            for="description"
             class="block font-semibold mb-1 text-left"
             >Description</label
           >
           <textarea
-            id="statusDescription"
-            v-model.trim="statusDescription"
+            id="description"
+            v-model.trim="description"
             maxlength="200"
             class="w-full border rounded-md p-2 font-medium"
             rows="4"
           ></textarea>
-          <small v-if="statusDescription.length > 200" class="text-red-500"
+          <small v-if="description.length > 200" class="text-red-500"
             >Description must be at most 200 characters long.</small
           >
         </div>
@@ -79,23 +79,23 @@ const props = defineProps({
 
 const emit = defineEmits(['closeModal', 'statusAdded'])
 
-const statusName = ref('')
-const statusDescription = ref('')
+const name = ref('')
+const description = ref('')
 const statusCode = ref(0)
 const operationType = ref(null)
 const showToast = ref(false)
 
 const closeModal = () => {
-  statusName.value = ''
-  statusDescription.value = ''
+  name.value = ''
+  description.value = ''
   emit('closeModal')
 }
 
 const isSaveDisabled = computed(() => {
   return (
-    !statusName.value.trim() ||
-    statusName.value.length > 50 ||
-    statusDescription.value.length > 200
+    !name.value.trim() ||
+    name.value.length > 50 ||
+    description.value.length > 200
   )
 })
 
@@ -104,17 +104,17 @@ const addStatus = async () => {
   try {
     const existingStatuses = await fetchUtils.fetchData('statuses')
     const existingStatusNames = existingStatuses.map(
-      (status) => status.statusName
+      (status) => status.name
     )
 
-    if (existingStatusNames.includes(statusName.value)) {
+    if (existingStatusNames.includes(name.value)) {
       alert('Status name must be unique. Please enter a different name.')
       return
     }
 
     const newStatus = {
-      statusName: statusName.value,
-      statusDescription: statusDescription.value
+      name: name.value,
+      description: description.value
     }
     const response = await fetchUtils.postData('statuses', newStatus)
     statusCode.value = response.statusCode

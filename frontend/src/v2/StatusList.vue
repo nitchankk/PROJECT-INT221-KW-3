@@ -42,11 +42,11 @@
               <td class="itbkk-status" style="text-align: center">
                 {{ index + 1 }}
               </td>
-              <td class="itbkk-status-name">{{ status.statusName }}</td>
+              <td class="itbkk-status-name">{{ status.name }}</td>
               <td class="itbkk-status-description" style="text-align: left">
                 <span
-                  v-if="status.statusDescription"
-                  v-html="status.statusDescription"
+                  v-if="status.description"
+                  v-html="status.description"
                 ></span>
                 <span
                   v-else
@@ -137,10 +137,10 @@ async function fetchData() {
     tasks.value = taskData
 
     // Check if route has a status ID and validate it
-    const statusId = route.params.statusId
+    const statusId = route.params.id
     if (
       statusId &&
-      !statuses.value.some((status) => status.statusId === statusId)
+      !statuses.value.some((status) => status.id === statusId)
     ) {
       alert('404 Not Found: Status ID does not exist')
       router.push('/status')
@@ -185,7 +185,7 @@ const selectedStatusIdToEdit = ref(null)
 const openEditModal = (status) => {
   selectedStatus.value = { ...status }
   console.log('Object to edit', selectedStatus.value)
-  selectedStatusIdToEdit.value = status.statusId
+  selectedStatusIdToEdit.value = status.id
   console.log('Id to edit', selectedStatusIdToEdit.value)
   isEditOpen.value = true
 }
@@ -201,8 +201,8 @@ const isDeleteOpen = ref(false)
 const selectedStatusIdToDelete = ref(null)
 
 const openDeleteModal = (status) => {
-  console.log('Status ID to delete:', status.statusId)
-  selectedStatusIdToDelete.value = status.statusId
+  console.log('Status ID to delete:', status.id)
+  selectedStatusIdToDelete.value = status.id
   isDeleteOpen.value = true
 }
 
@@ -217,8 +217,8 @@ const isTransferOpen = ref(false)
 const selectedStatusIdToTransfer = ref(null)
 
 const openTransferModal = (status) => {
-  console.log('Status ID to transfer:', status.statusId)
-  selectedStatusIdToTransfer.value = status.statusId
+  console.log('Status ID to transfer:', status.id)
+  selectedStatusIdToTransfer.value = status.id
   isTransferOpen.value = true
 }
 
@@ -229,7 +229,7 @@ const handleTransfer = () => {
 // Check if status is in use --------------------------------------
 const checkTasksBeforeDelete = (status) => {
   const statusInUse = tasks.value.some(
-    (task) => task.statusName === status.statusName
+    (task) => task.status.name === status.name
   )
   if (statusInUse) {
     openTransferModal(status)
