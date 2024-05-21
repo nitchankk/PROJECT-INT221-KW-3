@@ -6,39 +6,39 @@
       <div v-if="editedStatus">
         <form @submit.prevent="saveChanges" class="itbkk-modal-status">
           <div class="mb-4">
-            <label for="statusName" class="block font-semibold mb-1 text-left"
+            <label for="name" class="block font-semibold mb-1 text-left"
               >Name:</label
             >
             <input
-              v-model="editedStatus.statusName"
+              v-model="editedStatus.name"
               type="text"
-              id="statusName"
-              name="statusName"
+              id="name"
+              name="name"
               maxlength="50"
               class="w-full border rounded-md p-2 font-medium itbkk-status-name"
             />
             <small
-              v-if="editedStatus.statusName.length > 50"
+              v-if="editedStatus.name.length > 50"
               class="text-red-500"
               >Name must be at most 50 characters long.</small
             >
           </div>
           <div class="mb-4">
             <label
-              for="statusDescription"
+              for="description"
               class="block font-semibold mb-1 text-left itbkk-status-description"
               >Description:</label
             >
             <textarea
-              v-model="editedStatus.statusDescription"
-              id="statusDescription"
-              name="statusDescription"
+              v-model="editedStatus.description"
+              id="description"
+              name="description"
               rows="4"
               maxlength="200"
               class="w-full border rounded-md p-2 font-medium"
             ></textarea>
             <small
-              v-if="editedStatus.statusDescription.length > 200"
+              v-if="editedStatus.description.length > 200"
               class="text-red-500"
               >Description must be at most 200 characters long.</small
             >
@@ -88,8 +88,8 @@ const props = defineProps({
 
 const emit = defineEmits(['closeModal', 'statusEdited'])
 
-const editedStatus = ref({ statusName: '', statusDescription: '' })
-const initialStatus = ref({ statusName: '', statusDescription: '' })
+const editedStatus = ref({ name: '', description: '' })
+const initialStatus = ref({ name: '', description: '' })
 
 const showToast = ref(false)
 const statusCode = ref(0)
@@ -102,8 +102,8 @@ watch(
       editedStatus.value = { ...newValue }
       initialStatus.value = { ...newValue }
     } else {
-      editedStatus.value = { statusName: '', statusDescription: '' }
-      initialStatus.value = { statusName: '', statusDescription: '' }
+      editedStatus.value = { name: '', description: '' }
+      initialStatus.value = { name: '', description: '' }
     }
   }
 )
@@ -112,8 +112,8 @@ const isSaveDisabled = computed(() => {
   return (
     JSON.stringify(editedStatus.value) ===
       JSON.stringify(initialStatus.value) ||
-    editedStatus.value.statusName.length > 50 ||
-    editedStatus.value.statusDescription.length > 200
+    editedStatus.value.name.length > 50 ||
+    editedStatus.value.description.length > 200
   )
 })
 
@@ -128,11 +128,11 @@ const saveChanges = async () => {
 
     const existingStatuses = await fetchUtils.fetchData('statuses')
     const existingStatusNames = existingStatuses.map(
-      (status) => status.statusName
+      (status) => status.name
     )
 
-    if (editedStatus.value.statusName !== initialStatus.value.statusName) {
-      if (existingStatusNames.includes(editedStatus.value.statusName)) {
+    if (editedStatus.value.name !== initialStatus.value.name) {
+      if (existingStatusNames.includes(editedStatus.value.name)) {
         alert('Status name must be unique. Please enter a different name.')
         return
       }
