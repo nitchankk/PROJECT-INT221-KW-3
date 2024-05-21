@@ -68,10 +68,10 @@
               <option
                 v-else
                 v-for="status in statuses"
-                :key="status.id"
-                :value="status.name"
+                :key="status.statusId"
+                :value="status.statusName"
               >
-                {{ status.name }}
+                {{ status.statusName }}
               </option>
             </select>
           </div>
@@ -168,7 +168,7 @@ const handleEditTask = async () => {
     }
 
     const response = await FetchUtils.putData(
-      `tasks/${props.task.id}`,
+      `tasks/${props.task.taskId}`,
       updatedTask
     )
 

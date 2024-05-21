@@ -5,7 +5,7 @@
         <h2 class="modal-title">DELETE TASK</h2>
         <p class="itbkk-message">
           Do you want to delete the task number "{{ taskIndex }}" <br />
-          "{{ title }}" ?
+          "{{ taskTitle }}" ?
         </p>
         <div class="modal-buttons">
           <button
@@ -32,11 +32,11 @@ const props = defineProps({
     type: Function,
     required: true
   },
-  id: {
+  taskId: {
     type: Number,
     required: true
   },
-  title: {
+  taskTitle: {
     type: String,
     required: true
   },
@@ -50,10 +50,10 @@ const emit = defineEmits(['deleted', 'showSuccessModal']) // Add 'showSuccessMod
 
 const confirmDelete = async () => {
   try {
-    const response = await FetchUtils.deleteData(`tasks/${props.id}`)
+    const response = await FetchUtils.deleteData(`tasks/${props.taskId}`)
     const statusCode = response.statusCode
     console.log('Deletion status code:', statusCode)
-    emit('deleted', props.id, statusCode, 'delete')
+    emit('deleted', props.taskId, statusCode, 'delete')
     if (statusCode === 200) {
       emit('showSuccessModal') // Emit 'showSuccessModal' event
     }

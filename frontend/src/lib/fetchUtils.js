@@ -2,19 +2,17 @@
 
 const baseUrl = import.meta.env.VITE_API_URL
 
-const fetchData = async (url, id = null) => {
+const fetchData = async (url, taskId = null) => {
   try {
-    
     const response = await fetch(
-      id ? `${baseUrl}/${url}/${id}` : `${baseUrl}/${url}`
+      taskId ? `${baseUrl}/${url}/${taskId}` : `${baseUrl}/${url}`
     )
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
     const responseData = await response.json()
-    if (id) {
-      responseData.id = id
-
+    if (taskId) {
+      responseData.taskId = taskId
     }
     return responseData
   } catch (error) {

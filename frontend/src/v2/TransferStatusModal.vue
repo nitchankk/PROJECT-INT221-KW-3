@@ -17,11 +17,11 @@
         </option>
         <option
           v-for="status in filteredStatuses"
-          :key="status.id"
-          :value="status.id"
+          :key="status.statusId"
+          :value="status.statusId"
           class="py-2"
         >
-          {{ status.name }}
+          {{ status.statusName }}
         </option>
       </select>
 
@@ -85,10 +85,10 @@ const fetchExistingStatuses = async () => {
     const operationType = 'transfer'
 
     const defaultStatus = existingStatuses.value.find(
-      (status) => status.id === props.statusIdToTransfer
+      (status) => status.statusId === props.statusIdToTransfer
     )
 
-    selectedStatusId.value = defaultStatus ? defaultStatus.id : null
+    selectedStatusId.value = defaultStatus ? defaultStatus.statusId : null
   } catch (error) {
     console.error('Error fetching existing statuses:', error)
   }
@@ -151,15 +151,15 @@ const transferStatus = async () => {
 
 const filteredStatuses = computed(() => {
   return existingStatuses.value.filter(
-    (status) => status.id !== props.statusIdToTransfer
+    (status) => status.statusId !== props.statusIdToTransfer
   )
 })
 
 const defaultStatusName = computed(() => {
   const defaultStatus = existingStatuses.value.find(
-    (status) => status.id === props.statusIdToTransfer
+    (status) => status.statusId === props.statusIdToTransfer
   )
-  return defaultStatus ? defaultStatus.name : ''
+  return defaultStatus ? defaultStatus.statusName : ''
 })
 </script>
 

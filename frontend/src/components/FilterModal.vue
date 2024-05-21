@@ -16,17 +16,17 @@
         <!-- Render checkboxes for statuses -->
         <div
           v-for="status in statuses"
-          :key="status.name"
+          :key="status.statusName"
           class="flex items-center mb-2"
         >
           <input
             type="checkbox"
-            :value="status.name"
+            :value="status.statusName"
             v-model="localSelectedStatuses"
             @change="checkboxChanged"
             class="form-checkbox mr-2 h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
           />
-          <label class="text-sm">{{ status.name }}</label>
+          <label class="text-sm">{{ status.statusName }}</label>
         </div>
       </div>
       <!-- Display message if no checkbox is checked -->
@@ -82,7 +82,7 @@ const applyFilter = () => {
 const selectAllChanged = () => {
   if (selectAll.value) {
     localSelectedStatuses.value = props.statuses.map(
-      (status) => status.name
+      (status) => status.statusName
     )
   } else {
     localSelectedStatuses.value = []
