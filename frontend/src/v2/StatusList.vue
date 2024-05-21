@@ -307,6 +307,9 @@ td {
   border: 1px solid #e2e8f0;
   text-align: left;
   height: 40px;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
 }
 
 th {
