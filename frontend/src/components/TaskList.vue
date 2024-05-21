@@ -221,7 +221,7 @@ const taskToEdit = ref(null)
 const operationType = ref('')
 const taskTitleToDelete = ref(null)
 const taskIndexToDelete = ref(null)
-const selectedStatuses = ref([])
+const selectedStatuses = ref(statuses.value.map((status) => status.statusName))
 
 const sortOrder = ref(0)
 
@@ -269,11 +269,19 @@ const sortedTasks = computed(() => {
   } else {
     sorted.sort((a, b) => new Date(a.createdOn) - new Date(b.createdOn))
   }
-  return sorted.filter(
-    (task) =>
-      selectedStatuses.value.length === 0 ||
+
+  let filteredTasks = sorted
+
+  if (selectedStatuses.value.length > 0) {
+    filteredTasks = sorted.filter((task) =>
       selectedStatuses.value.includes(task.statusName)
-  )
+    )
+  } else {
+    // Show all tasks by default
+    filteredTasks = tasks.value
+  }
+
+  return filteredTasks
 })
 
 const getStatusLabel = (statusName, statuses) => {
@@ -391,6 +399,7 @@ const showFilterModal = ref(false)
 
 const openFilterModal = () => {
   showFilterModal.value = true
+  console.log('Opening filter modal...')
 }
 
 const closeFilterModal = () => {

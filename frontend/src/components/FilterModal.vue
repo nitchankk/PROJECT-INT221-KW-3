@@ -3,16 +3,17 @@
     <div class="modal-content p-6 bg-white rounded-lg">
       <h2 class="text-xl font-semibold mb-4">Select Statuses to Filter</h2>
       <div class="status-checkboxes">
-        <!-- Add "All" checkbox -->
+        <!-- Select All Checkbox -->
         <div class="flex items-center mb-2">
           <input
             type="checkbox"
             v-model="selectAll"
+            @change="selectAllChanged"
             class="form-checkbox mr-2 h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
           />
           <label class="text-sm">All</label>
         </div>
-        <!-- Render other checkboxes -->
+        <!-- Render checkboxes for statuses -->
         <div
           v-for="status in statuses"
           :key="status.statusName"
@@ -22,15 +23,30 @@
             type="checkbox"
             :value="status.statusName"
             v-model="localSelectedStatuses"
+            @change="checkboxChanged"
             class="form-checkbox mr-2 h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
           />
           <label class="text-sm">{{ status.statusName }}</label>
         </div>
       </div>
+      <!-- Display message if no checkbox is checked -->
+      <div
+        v-if="localSelectedStatuses.length === 0 && !selectAll"
+        class="text-red-600 mb-2"
+      >
+        You must select at least one.
+      </div>
       <div class="modal-buttons flex justify-end mt-4">
         <button
           @click="applyFilter"
-          class="apply-button px-4 py-2 bg-green-500 text-white rounded-md"
+          :disabled="localSelectedStatuses.length === 0 && !selectAll"
+          :class="{
+            'bg-gray-400 cursor-not-allowed':
+              localSelectedStatuses.length === 0 && !selectAll,
+            'bg-green-500 cursor-pointer':
+              localSelectedStatuses.length > 0 || selectAll
+          }"
+          class="apply-button px-4 py-2 text-white rounded-md"
         >
           Apply Filter
         </button>
@@ -46,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   statuses: Array,
@@ -58,27 +74,27 @@ const emit = defineEmits(['applyFilter', 'close'])
 const localSelectedStatuses = ref([...props.selectedStatuses])
 const selectAll = ref(false)
 
-// Watch for changes in the selectAll checkbox value
-watch(selectAll, (newValue) => {
-  // If "All" checkbox is checked, select all statuses
-  if (newValue) {
+const applyFilter = () => {
+  emit('applyFilter', localSelectedStatuses.value)
+}
+
+// Method to handle click on "Select All" checkbox
+const selectAllChanged = () => {
+  if (selectAll.value) {
     localSelectedStatuses.value = props.statuses.map(
       (status) => status.statusName
     )
   } else {
-    localSelectedStatuses.value = [] // If "All" checkbox is unchecked, clear the selection
+    localSelectedStatuses.value = []
   }
-})
+}
 
-const applyFilter = () => {
-  if (selectAll.value) {
-    // If "All" checkbox is checked, select all statuses
-    emit(
-      'applyFilter',
-      props.statuses.map((status) => status.statusName)
-    )
+// Method to handle click on individual checkboxes
+const checkboxChanged = () => {
+  if (localSelectedStatuses.value.length === props.statuses.length) {
+    selectAll.value = true
   } else {
-    emit('applyFilter', localSelectedStatuses.value)
+    selectAll.value = false
   }
 }
 </script>
@@ -98,10 +114,6 @@ const applyFilter = () => {
 
 .modal-content {
   max-width: 400px;
-}
-
-.status-checkbox {
-  margin-bottom: 0.5rem;
 }
 
 .apply-button,
