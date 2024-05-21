@@ -4,8 +4,7 @@
       v-if="show"
       class="toast fixed top-10 left-10 px-6 py-3 rounded-md flex items-center"
       :class="{
-        'bg-green-500 text-white':
-          statusCode === 201 && operationType === 'add',
+        'bg-green-400 text-white': operationType === 'add',
         'bg-blue-400 text-white':
           statusCode === 200 && operationType === 'edit',
         'bg-red-500 text-white':
@@ -16,9 +15,7 @@
         'bg-orange-500 text-white': statusCode === 404 || statusCode === 500
       }"
     >
-      <span v-if="statusCode === 201 && operationType === 'add'"
-        >The status has been added</span
-      >
+      <span v-if="operationType === 'add'">The status has been added</span>
       <span v-if="statusCode === 200 && operationType === 'edit'"
         >The status has been updated</span
       >

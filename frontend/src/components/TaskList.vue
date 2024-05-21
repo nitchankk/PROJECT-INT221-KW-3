@@ -654,12 +654,12 @@ tbody tr:hover {
 .btn-hover.color {
   background-image: linear-gradient(
     to right,
-    #ed6ea0,
-    #ec8c69,
-    #f7186a,
-    #fbb03b
+    #667eea,
+    #764ba2,
+    #6b8dd6,
+    #8e37d7
   );
-  box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+  box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
 }
 </style>
 
