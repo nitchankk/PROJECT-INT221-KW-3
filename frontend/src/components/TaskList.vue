@@ -489,7 +489,6 @@ onMounted(() => {
   border-collapse: collapse;
   width: 100%;
   border-radius: 8px;
-  table-layout: fixed;
 }
 
 .table th,
@@ -498,9 +497,6 @@ onMounted(() => {
   padding: 12px;
   text-align: left;
   height: 40px;
-  word-wrap: break-word;
-  word-break: break-all;
-  white-space: normal;
 }
 
 .table th {
