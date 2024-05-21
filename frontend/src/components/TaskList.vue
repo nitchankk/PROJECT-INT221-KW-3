@@ -1,10 +1,13 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold">IT Bangmod Kradan Kanban by kw-3</h1>
-    <h2 class="text-2xl">Task List</h2>
+    <h1 class="heading">IT Bangmod Kradan Kanban by kw-3</h1>
+    <h2 class="subheading">Task List</h2>
     <div id="app">
       <div class="manage-status">
-        <button @click="goToStatusManagement" class="itbkk-manage-status">
+        <button
+          @click="goToStatusManagement"
+          class="btn-hover color itbkk-manage-status"
+        >
           Manage Status
         </button>
       </div>
@@ -443,6 +446,36 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.heading {
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: glow 2s infinite alternate;
+}
+
+.subheading {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 2px 2px 4px rgba(59, 192, 233, 0.747);
+  }
+  to {
+    text-shadow: 4px 4px 8px rgba(230, 70, 245, 0.8);
+  }
+}
+
 .table-container {
   margin: 0 auto;
   width: 100%;
@@ -523,36 +556,12 @@ tbody tr:hover {
 }
 
 .manage-status {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
   text-align: right;
   margin: 10px;
-}
-
-.itbkk-manage-status {
-  background-color: #aebac4;
-  color: #fff;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: background-color 0.3s ease;
-  text-align: center;
-  width: 120px;
-}
-
-.manage-status button:hover {
-  background-color: #276fad;
-}
-
-.manage-status button:focus {
-  outline: none;
-}
-
-.manage-status button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .itbkk-button-add button:hover {
@@ -614,6 +623,43 @@ tbody tr:hover {
 .itbkk-filter-status img:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-hover {
+  width: 130px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  height: 60px;
+  text-align: center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btn-hover:hover {
+  background-position: 100% 0;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btn-hover:focus {
+  outline: none;
+}
+
+.btn-hover.color {
+  background-image: linear-gradient(
+    to right,
+    #ed6ea0,
+    #ec8c69,
+    #f7186a,
+    #fbb03b
+  );
+  box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
 }
 </style>
 

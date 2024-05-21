@@ -1,10 +1,15 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold">IT Bangmod Kradan Kanban by kw-3</h1>
+    <h1 class="heading">IT Bangmod Kradan Kanban by kw-3</h1>
     <div id="app">
-      <h2 class="text-2xl">Status Manager</h2>
+      <h2 class="subheading">Status Manager</h2>
       <div class="back-home">
-        <button @click="backToHomePage" class="itbkk-button-home">HOME</button>
+        <button
+          @click="backToHomePage"
+          class="btn-hover color itbkk-button-home"
+        >
+          Home
+        </button>
       </div>
       <div class="table-container">
         <table>
@@ -242,6 +247,35 @@ onMounted(fetchData)
   margin: 0 auto;
 }
 
+.heading {
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: glow 2s infinite alternate;
+}
+
+.subheading {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 2px 2px 4px rgba(59, 192, 233, 0.747);
+  }
+  to {
+    text-shadow: 4px 4px 8px rgba(230, 70, 245, 0.8);
+  }
+}
+
 .table-container {
   margin: 0 auto;
   width: 80%;
@@ -310,35 +344,12 @@ tbody tr:hover {
 }
 
 .back-home {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
   text-align: right;
   margin: 10px;
-}
-
-.back-home button {
-  background-color: #276fad;
-  color: #fff;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: background-color 0.3s ease;
-  text-align: center;
-}
-
-.back-home button:hover {
-  background-color: #aebac4;
-}
-
-.back-home button:focus {
-  outline: none;
-}
-
-.back-home button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-icon button:hover {
@@ -357,5 +368,43 @@ tbody tr:hover {
 .itbkk-button-action button:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-hover {
+  width: 130px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  height: 60px;
+  text-align: center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btn-hover:hover {
+  background-position: 100% 0;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btn-hover:focus {
+  outline: none;
+}
+
+.btn-hover.color {
+  background-image: linear-gradient(
+    to right,
+    #1ac47a,
+    #4ecca4,
+    #31e990,
+    #3fc082
+  );
+  box-shadow: 0 4px 15px 0 rgba(23, 168, 108, 0.75);
 }
 </style>
