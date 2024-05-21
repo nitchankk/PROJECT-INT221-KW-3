@@ -146,7 +146,7 @@ async function fetchData() {
 }
 
 const backToHomePage = () => {
-  router.push({name: "taskView"})
+  router.push({ name: 'taskView' })
 }
 
 // Add ----------------------------------------------------------
@@ -280,7 +280,11 @@ th {
 }
 
 tbody tr:nth-child(even) {
-  background-color: #ebebeb;
+  background-color: #ffedf7ea;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #daf6f8cb;
 }
 
 tbody tr:hover {

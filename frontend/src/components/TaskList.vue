@@ -195,6 +195,21 @@
       @close="closeFilterModal"
     ></filter-modal>
   </div>
+
+  <div class="area">
+    <ul class="circles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
@@ -432,7 +447,7 @@ onMounted(() => {
   margin: 0 auto;
   width: 100%;
   max-width: 1700px;
-  overflow-x: none;
+  overflow-x: hidden;
   border-radius: 8px;
   font-size: 19px;
 }
@@ -457,7 +472,11 @@ onMounted(() => {
 }
 
 tbody tr:nth-child(even) {
-  background-color: #ebebeb;
+  background-color: #ffedf7ea;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #daf6f8cb;
 }
 
 tbody tr:hover {
@@ -595,5 +614,26 @@ tbody tr:hover {
 .itbkk-filter-status img:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<style>
+body {
+  background: linear-gradient(-45deg, #e7886a, #e47ba3, #67abc4, #68c7b1);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  height: 100vh;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 </style>
