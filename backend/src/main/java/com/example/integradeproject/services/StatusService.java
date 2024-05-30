@@ -1,6 +1,7 @@
 package com.example.integradeproject.services;
 
 import com.example.integradeproject.dtos.NewTaskDTO;
+import com.example.integradeproject.dtos.StatusDTO;
 import com.example.integradeproject.entities.Status;
 import com.example.integradeproject.entities.Task;
 import com.example.integradeproject.entities.Task2;
@@ -17,6 +18,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class StatusService {
     @Autowired
@@ -35,38 +38,113 @@ public class StatusService {
     }
 
     public Status createNewStatus(Status status) {
+        if (status.getStatusName() == null || status.getStatusName().trim().toLowerCase().isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Name must not be null");
+        }
+        // valid name exist
+        // เช็ค ว่า T or F
+        boolean exists = statusRepository.existsByStatusName(status.getStatusName());
+        if (exists) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Name must be unique. ");
+        }
+
+
+        StringBuilder error = new StringBuilder();
+        if (status.getStatusName().length() > 50) {
+            error.append("name size must be between 0 and 50.");
+        }
+
+        if (status.getStatusDescription().length() > 200) {
+            error.append("description size must be between 0 and 200.");
+        }
+        if (error.length() > 0) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, error.toString());
+        }
+
         return statusRepository.saveAndFlush(status);
     }
 
 
 
-    public Status updateByStatusId(Status status, Integer statusId) {
-        Status existingStatus = statusRepository.findById(statusId)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID " + status + " DOES NOT EXIST !!!"));
-
-        if (status == null || status.getStatusName() == null || status.getStatusName().isEmpty()) {
-            throw new IllegalArgumentException("name is required");
-        }
-        Integer originalId = existingStatus.getStatusId();
-        mapper.map(status, existingStatus);
-        existingStatus.setStatusId(originalId);
-
-        return statusRepository.saveAndFlush(existingStatus);
-    }
     @Transactional
-    public Status deleteById(Integer statusId) {
-        Status status = statusRepository.findById(statusId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status with ID " + statusId + " does not exist"));
+    public Status updateByStatusId(Integer id, Status updatedStatus) {
+        Optional<Status> optionalStatus = statusRepository.findById(id);
+        if (optionalStatus.isPresent()) {
+            Status existingStatus = optionalStatus.get();
 
-        statusRepository.delete(status);
-        return status;
+            // Check status name ถูกแก้ไขไหม
+            if (!existingStatus.getStatusName().equals(updatedStatus.getStatusName())) {
+                // ถ้าถูกแก้ไขจะเช็คจาก boolean
+                boolean exists = statusRepository.existsByStatusName(updatedStatus.getStatusName());
+                if (exists) {
+                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Status name must be unique.");
+                }
+            }
+
+            StringBuilder error = new StringBuilder();
+            if (updatedStatus.getStatusName().length() > 50) {
+                error.append("name size must be between 0 and 50.");
+            }
+
+            if (updatedStatus.getStatusDescription().length() > 200) {
+                error.append("description size must be between 0 and 200.");
+            }
+            if (error.length() > 0) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, error.toString());
+            }
+
+            // Update the status
+            existingStatus.setStatusName(updatedStatus.getStatusName());
+            existingStatus.setStatusDescription(updatedStatus.getStatusDescription());
+            return statusRepository.save(existingStatus);
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Status not found with id: " + id);
+        }
     }
+
+
+    @Transactional
+    public StatusDTO deleteById(Status id) {
+        // validate
+        if (id.getStatusId() == 1){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST ,  "No Status Cannot be deleted");
+        }
+        if (id.getStatusId() == 6){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST ,  "Done Cannot be deleted");
+        }
+        Status status = statusRepository.findById(id.getStatusId())
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID " + id + " DOES NOT EXIST !!!"));
+
+        if (isStatusInUse(id)) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Cannot delete Status with ID " + id + " as it is currently in use.");
+        }
+
+
+        statusRepository.deleteById(id.getStatusId());
+        StatusDTO deletedStatusDTO = mapper.map(status, StatusDTO.class);
+
+        return deletedStatusDTO;
+    }
+    public boolean isStatusInUse(Status status) {
+        return task2Repository.existsByStatusId(status.getStatusId());
+    }
+
     @Transactional
     public void deleteStatusAndTransferTasks(int id, int newStatusId) {
+        if (id == newStatusId){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "destination status for task transfer must be different from current status");
+        }
+        if (id == 1){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST ,  "No Status Cannot be deleted");
+        }
+        if (id == 6){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST ,  "Done Cannot be deleted");
+        }
+
         Status currentStatus = statusRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Status with ID " + id + " does not exist"));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Status with ID " + id + " does not exist"));
         Status newStatus = statusRepository.findById(newStatusId)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Status with ID " + newStatusId + " does not exist"));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "the specified status for task transfer does not exist"));
 
         List<Task2> tasksWithCurrentStatus = task2Repository.findByStatusId(currentStatus);
         tasksWithCurrentStatus.forEach(task -> task.setStatusId(newStatus));
@@ -74,4 +152,5 @@ public class StatusService {
 
         statusRepository.delete(currentStatus);
     }
+
 }

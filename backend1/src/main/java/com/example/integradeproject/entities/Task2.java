@@ -1,19 +1,12 @@
 package com.example.integradeproject.entities;
 
 
-import java.util.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -26,21 +19,23 @@ public class Task2 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "taskId")
-    private Integer taskId;
+    private Integer id;
     private String title ;
     private String description ;
     private String assignees ;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "statusId" ,name ="statusId")
-    private Status  statusId ;
+    @JoinColumn(name ="statusId" , referencedColumnName = "statusId")
+    private Status  status ;
 
     @Column(name = "createdOn", updatable = false, insertable = false)
     private Date createdOn;
     @Column(name = "updatedOn", updatable = false, insertable = false)
     private Date updatedOn;
 
+    public Task2() {
 
-
+        this.status = new Status( 1, "NO STATUS" , null);
+    }
 }
 

@@ -1,15 +1,7 @@
 package com.example.integradeproject.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -21,15 +13,18 @@ import lombok.Setter;
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer statusId ;
-    private String statusName;
-    private String statusDescription;
+    @Column(name = "statusId")
+    private Integer id ;
+    @Column(name = "statusName")
+    private String name;
+    @Column(name = "statusDescription")
+    private String description;
     public void setName(String name) {
-        this.statusName = name == null ? null : name.trim();
+        this.name = name == null ? null : name.trim();
     }
 
     public void setDescription(String description) {
-        this.statusDescription = description == null ? null : description.trim();
+        this.description = description == null ? null : description.trim();
     }
 
 

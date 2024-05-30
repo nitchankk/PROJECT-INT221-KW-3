@@ -1,28 +1,21 @@
 package com.example.integradeproject.controllers;
 
-import java.util.List;
-
+import com.example.integradeproject.dtos.*;
+import com.example.integradeproject.entities.Status;
+import com.example.integradeproject.entities.Task2;
+import com.example.integradeproject.services.ListMapper;
+import com.example.integradeproject.services.StatusService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.example.integradeproject.entities.Status;
-import com.example.integradeproject.services.ListMapper;
-import com.example.integradeproject.services.StatusService;
+import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://ip23kw3.sit.kmutt.ac.th", "http://intproj23.sit.kmutt.ac.th" ,"http://localhost:5173"})
+@CrossOrigin(origins = "http://localhost:5173")
 
 @RequestMapping("/v2/statuses")
 public class StatusController {
@@ -37,35 +30,58 @@ public class StatusController {
     public List<Status> getALLStatus(){
         return service.findAllStatus();
     }
-    @PostMapping("")
-    public ResponseEntity<Status> createStatus(@RequestBody Status status) {
-        Status newStatus = service.createNewStatus(status);
-        return new ResponseEntity<>(newStatus, HttpStatus.OK);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Status> getStatusById(@PathVariable Integer id) {
+        Status status = service.findById(id);
+        return ResponseEntity.ok(status);
     }
 
+
+    @PostMapping("")
+    public ResponseEntity<?> createStatus(@RequestBody Status status) {
+        try {
+            Status newStatus = service.createNewStatus(status);
+            return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
+        } catch (HttpClientErrorException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+        }
+    }
+
+
     @PutMapping("/{id}")
-    public  ResponseEntity<Status> UpdateStatus (@RequestBody Status status , @PathVariable Integer id ){
+    public  ResponseEntity<?> UpdateStatus (@RequestBody Status status , @PathVariable Integer id ){
         try{
-            Status updateStatus  =service.updateByStatusId(status , id);
+            Status updateStatus  =service.updateStatus(id, status);
             return  ResponseEntity.ok(updateStatus);
 
         }catch (HttpClientErrorException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(null);
+            return ResponseEntity.status(e.getStatusCode()).body(e.getStatusText());
         }
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> removeStatus(@PathVariable Integer id) {
-        service.deleteById(id);
-        return ResponseEntity.ok("{}");
+        try {
+            NewTask2DTO deletedStatusDTO = service.deleteById(id);
+            return ResponseEntity.ok(deletedStatusDTO);
+        } catch (HttpClientErrorException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+        }
     }
 
     @DeleteMapping("/{id}/{newId}")
     public ResponseEntity<Object> deleteStatusAndTransferTasks(@PathVariable int id, @PathVariable int newId) {
-        service.deleteStatusAndTransferTasks(id, newId);
-        return ResponseEntity.ok("{}");
-    }
-}
+        try {
+            service.deleteStatusAndTransferTasks(id, newId);
+            return ResponseEntity.ok("{}");
+        }catch (HttpClientErrorException e ){
+            return ResponseEntity.status(e.getStatusCode()).body(e.getStatusText());
+        }
 
+    }
+
+
+}
 
 
 

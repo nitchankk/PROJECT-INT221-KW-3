@@ -5,6 +5,7 @@ import com.example.integradeproject.entities.Task;
 import com.example.integradeproject.entities.Task2;
 import com.example.integradeproject.services.ListMapper;
 import com.example.integradeproject.services.Task2Service;
+import com.example.integradeproject.services.TaskValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,9 @@ public class Task2Controller {
 
     @GetMapping("")
     public ResponseEntity<List<Task2DTO>> getAllTasks(
-            @RequestParam(required = false) String filterStatus,
-            @RequestParam(required = false) String statusName
-    ) {
-        List<Task2DTO> tasks = service.getTask(filterStatus, statusName);
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) List<String> filterStatuses) {
+        List<Task2DTO> tasks = service.getTask(sortBy, filterStatuses);
         return ResponseEntity.ok(tasks);
     }
     @GetMapping("/{id}")
@@ -53,13 +53,15 @@ public class Task2Controller {
 //    }
 @PostMapping("")
 public ResponseEntity<NewTask2DTO> createTask(@RequestBody NewTask2DTO newTask2DTO) {
+    TaskValidator.validateNewTask2DTO(newTask2DTO);
     NewTask2DTO createdTaskDTO = service.createTask(newTask2DTO);
-    return new ResponseEntity<>(createdTaskDTO, HttpStatus.OK);
+    return new ResponseEntity<>(createdTaskDTO, HttpStatus.CREATED);
 }
     @PutMapping("/{id}")
     public ResponseEntity<NewTask2DTO> updateTask(@PathVariable Integer id, @RequestBody NewTask2DTO newTask2DTO) {
+        TaskValidator.validateNewTask2DTO(newTask2DTO);
         NewTask2DTO updatedTaskDTO = service.updateTask(id, newTask2DTO);
-        return new ResponseEntity<>(updatedTaskDTO, HttpStatus.OK);
+        return new ResponseEntity<>(updatedTaskDTO, HttpStatus.CREATED);
     }
 }
 

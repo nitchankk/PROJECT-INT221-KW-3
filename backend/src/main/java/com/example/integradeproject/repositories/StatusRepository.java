@@ -10,5 +10,6 @@ public interface StatusRepository extends JpaRepository  <Status , Integer>{
     Optional<Status> findByStatusName(String statusName);
 
     List<Status> findByStatusNameContains( String Name );
+    boolean existsByStatusName(String name);
 
 }

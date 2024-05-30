@@ -40,6 +40,7 @@ public class TaskService {
         Task task = mapper.map(newTask, Task.class);
         Task savedTask = repository.saveAndFlush(task);
         return mapper.map(savedTask, NewTaskDTO.class);
+
     }
 
     @Transactional
@@ -48,6 +49,7 @@ public class TaskService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID " + id + " DOES NOT EXIST !!!"));
         repository.deleteById(task.getTaskId());
         NewTaskDTO deletedTaskDTO = mapper.map(task, NewTaskDTO.class);
+
 
         return deletedTaskDTO;
     }
@@ -69,5 +71,6 @@ public class TaskService {
 
         return updatedTaskDTO;
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.integradeproject.controllers;
 
+import com.example.integradeproject.dtos.StatusDTO;
 import com.example.integradeproject.entities.Status;
 import com.example.integradeproject.services.ListMapper;
 import com.example.integradeproject.services.StatusService;
@@ -29,31 +30,46 @@ public class StatusController {
         return service.findAllStatus();
     }
     @PostMapping("")
-    public ResponseEntity<Status> createStatus(@RequestBody Status status) {
-        Status newStatus = service.createNewStatus(status);
-        return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
+    public ResponseEntity<?> createStatus(@RequestBody Status status) {
+        try {
+            Status newStatus = service.createNewStatus(status);
+            return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
+        } catch (HttpClientErrorException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Status> UpdateStatus(@RequestBody Status status, @PathVariable Integer id) {
-        try {
-            Status updatedStatus = service.updateByStatusId(status, id);
-            return ResponseEntity.ok(updatedStatus);
-        } catch (HttpClientErrorException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(null);
+    public  ResponseEntity<?> UpdateStatus (@RequestBody Status status , @PathVariable Integer id ){
+        try{
+            Status updateStatus  =service.updateByStatusId(id, status);
+            return  ResponseEntity.ok(updateStatus);
+
+        }catch (HttpClientErrorException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getStatusText());
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> removeStatus(@PathVariable Integer id) {
-        service.deleteById(id);
-        return ResponseEntity.ok("{}");
+    public ResponseEntity<Object> removeStatus(@PathVariable Status id) {
+        try {
+            StatusDTO deletedStatusDTO = service.deleteById(id);
+            return ResponseEntity.ok(deletedStatusDTO);
+        } catch (HttpClientErrorException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+        }
     }
 
     @DeleteMapping("/{id}/{newId}")
     public ResponseEntity<Object> deleteStatusAndTransferTasks(@PathVariable int id, @PathVariable int newId) {
-        service.deleteStatusAndTransferTasks(id, newId);
-        return ResponseEntity.ok("{}");
+        try {
+            service.deleteStatusAndTransferTasks(id, newId);
+            return ResponseEntity.ok("{}");
+        }catch (HttpClientErrorException e ){
+            return ResponseEntity.status(e.getStatusCode()).body(e.getStatusText());
+        }
+
     }
+
 
 
 }
